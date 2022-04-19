@@ -1,74 +1,64 @@
 import settings as stg
 import pygame
+import random
 
 class Snake:
-    def __init__(self):
-        self.x = stg.SCREEN_W//2
-        self.y = stg.SCREEN_H//2
+    def __init__(self, x=stg.SCREEN_W//stg.SNAKE_SPEED, y=stg.SCREEN_H//stg.SNAKE_SPEED):
+        self.position = [x, y]
         self.direction = None
-        self.next = None
+        self.body = [[x, y]]
         self.length = 1
         self.just_ate = False
 
-    def update(self):
-        self.pos_update()
-        self.draw()
+    def update(self, screen):
+        self.direction_update()
+        self.draw(screen)
 
-    def draw(self, screen=stg.screen):
-        temp_node = self
-        while temp_node != None:
-            print(1)
-            rect = pygame.Rect(temp_node.x, temp_node.y, 1, 1)
-            #pygame.draw.rect(screen, stg.snake_skin, rect, 2)
-            print(2)
-            temp_node = temp_node.next
+    def draw(self, screen):
+        for pos in self.body:
+            rect = pygame.Rect(pos[0], pos[1], stg.SNAKE_SIZE, stg.SNAKE_SIZE)
+            pygame.draw.rect(screen, stg.snake_skin, rect)
 
-        temp_node = None
+    def move(self, foodPos):
+        if self.direction == "RIGHT":
+            self.position[0] = self.position[0] + stg.SNAKE_SPEED
+        elif self.direction == "LEFT":
+            self.position[0] = self.position[0] - stg.SNAKE_SPEED
+        elif self.direction == "UP":
+            self.position[1] = self.position[1] - stg.SNAKE_SPEED
+        elif self.direction == "DOWN":
+            self.position[1] = self.position[1] + stg.SNAKE_SPEED
+        self.body.insert(0, list(self.position))
 
-    def pos_update(self):
-        temp_node = self
-        hold_x = temp_node.x
-        hold_y = temp_node.y
-
-        while temp_node.next != None:
-            temp_node.next.x, hold_x = hold_x, temp_node.next.x
-            temp_node.next.y, hold_y = hold_y, temp_node.next.y
-
-            temp_node = temp_node.next
-
-        if (self.direction == "LEFT") and (self.x < stg.SCREEN_W):
-            self.x += 1
-
-        elif (self.direction == "RIGHT") and (self.x > 0):
-            self.x -= 1
-
-        elif (self.direction == "DOWN") and (self.y < stg.SCREEN_H):
-            self.y += 1
-
-        elif (self.direction == "UP") and (self.y > 0):
-            self.y -= 1
-
+        if self.position == foodPos:
+            self.length += 1
+            return 1
         else:
-            pygame.quit()
+            self.body.pop()
+            return 0
 
     def direction_update(self):
         key = pygame.key.get_pressed()
 
-        if key[pygame.K_LEFT]:
+        if key[pygame.K_LEFT] and self.direction != "RIGHT":
             self.direction = "LEFT"
 
-        elif key[pygame.K_RIGHT]:
+        elif key[pygame.K_RIGHT] and self.direction != "LEFT":
             self.direction = "RIGHT"
 
-        elif key[pygame.K_UP]:
+        elif key[pygame.K_UP] and self.direction != "DOWN":
             self.direction = "UP"
 
-        elif key[pygame.K_DOWN]:
+        elif key[pygame.K_DOWN] and self.direction != "UP":
             self.direction = "DOWN"
 
-    def add_part(self):
-        if self.just_ate == True:
-            temp = self
-            self.pos_update()
-            self.next = temp
-            self.just_ate = False
+    def checkCollision(self):
+        if self.position[0] > stg.SCREEN_W - stg.SNAKE_SIZE or self.position[0] < stg.SNAKE_SIZE:
+            return 1
+        elif self.position[1] > stg.SCREEN_H or self.position[1] < stg.SNAKE_SIZE:
+            return 1
+        for bodyPart in self.body[1:]:
+            if self.position == bodyPart:
+                return 1
+        return 0
+
