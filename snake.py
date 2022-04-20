@@ -30,7 +30,8 @@ class Snake:
             self.position[1] = self.position[1] + stg.SNAKE_SPEED
         self.body.insert(0, list(self.position))
 
-        if self.position == foodPos:
+        if (foodPos[0] - stg.SNAKE_SPEED//2 <= self.position[0] <= foodPos[0] + stg.SNAKE_SPEED//2) and \
+                (foodPos[1] - stg.SNAKE_SPEED//2 <= self.position[1] <= foodPos[1] + stg.SNAKE_SPEED//2):
             self.length += 1
             return 1
         else:

@@ -4,7 +4,7 @@ import random
 
 class Fruit:
     def __init__(self):
-        self.pos = [random.randint(4, 46) * stg.SNAKE_SPEED, random.randint(4, 46) * stg.SNAKE_SPEED]
+        self.pos = [random.randint(8, 42) * stg.SNAKE_SPEED, random.randint(6, 44) * stg.SNAKE_SPEED]
         self.eaten = False
 
     def draw(self, screen):

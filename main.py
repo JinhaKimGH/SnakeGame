@@ -14,6 +14,9 @@ def title(screen):
 
         ttl.draw(screen)
 
+        if not ttl.react(pygame.mouse.get_pos()):
+            break
+
 
 def main():
     pygame.init()
@@ -32,12 +35,20 @@ def main():
 
     while run:
         screen.fill(stg.BLACK)
-
         if stg.isTitle:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                    break
+
             title(screen)
 
         elif stg.isEndScreen:
-            pass
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    run = False
+                    break
+
 
         else:
             fruits.draw(screen)
