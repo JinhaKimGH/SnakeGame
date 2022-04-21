@@ -1,29 +1,33 @@
-#Dimensions
+# Dimensions
 SCREEN_H = 500
 
 SCREEN_W = 500
 
-#Title
+# Title
 TITLE = "Snake Game"
 
-#Color
+# Color
 snake_skin = (81, 189, 88)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (220, 20, 60)
 PALE_WHITE = (220, 223, 227)
 PLAY_HOVER = WHITE
+HIGHSCORE_HOVER = WHITE
 EXIT_HOVER = WHITE
 GREEN = (152, 255, 152)
 
-#Snake Attributes
+# Snake Attributes
 SNAKE_SIZE = 10
 SNAKE_SPEED = 10
 
-#Font Attributes
+# Font Attributes
 FONT_SIZE = 30
 titleFont = 90
 
-#Screen types
+# Screen types
 isTitle = True
-isEndScreen = False
+isHighScore = False
+startTime = True
+
+
