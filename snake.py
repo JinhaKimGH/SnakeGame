@@ -9,15 +9,25 @@ class Snake:
         self.body = [[x, y]]
         self.length = 1
         self.just_ate = False
+        self.head_img = pygame.transform.scale(pygame.image.load(r'Resources\snakehead.png'), (stg.SNAKE_SIZE,
+                                                                                               stg.SNAKE_SIZE))
+        self.last_dir = "DOWN"
 
     def update(self, screen):
         self.direction_update()
         self.draw(screen)
 
     def draw(self, screen):
+        first = True
+
         for pos in self.body:
-            rect = pygame.Rect(pos[0], pos[1], stg.SNAKE_SIZE, stg.SNAKE_SIZE)
-            pygame.draw.rect(screen, stg.snake_skin, rect)
+            if first:
+                screen.blit(self.head_img, (pos[0], pos[1]))
+                first = False
+
+            else:
+                rect = pygame.Rect(pos[0], pos[1], stg.SNAKE_SIZE, stg.SNAKE_SIZE)
+                pygame.draw.rect(screen, stg.snake_skin, rect)
 
     def move(self, foodPos):
         if self.direction == "RIGHT":
@@ -40,6 +50,8 @@ class Snake:
 
     def direction_update(self):
         key = pygame.key.get_pressed()
+        if self.direction != None:
+            self.last_dir = self.direction
 
         if key[pygame.K_LEFT] and self.direction != "RIGHT":
             self.direction = "LEFT"
@@ -52,6 +64,37 @@ class Snake:
 
         elif key[pygame.K_DOWN] and self.direction != "UP":
             self.direction = "DOWN"
+
+        self.rotate_head()
+
+
+    def rotate_head(self):
+        if self.last_dir == "RIGHT" and self.direction == "UP":
+            self.head_img = pygame.transform.rotate(self.head_img, 90)
+
+        elif self.last_dir == "RIGHT" and self.direction == "DOWN":
+            self.head_img = pygame.transform.rotate(self.head_img, 270)
+
+        elif self.last_dir == "LEFT" and self.direction == "UP":
+            self.head_img = pygame.transform.rotate(self.head_img, 270)
+
+        elif self.last_dir == "LEFT" and self.direction == "DOWN":
+            self.head_img = pygame.transform.rotate(self.head_img, 90)
+
+        elif self.last_dir == "UP" and self.direction == "RIGHT":
+            self.head_img = pygame.transform.rotate(self.head_img, 270)
+
+        elif self.last_dir == "UP" and self.direction == "LEFT":
+            self.head_img = pygame.transform.rotate(self.head_img, 90)
+
+        elif self.last_dir == "DOWN" and self.direction == "RIGHT":
+            self.head_img = pygame.transform.rotate(self.head_img, 90)
+
+        elif self.last_dir == "DOWN" and self.direction == "LEFT":
+            self.head_img = pygame.transform.rotate(self.head_img, 270)
+
+        elif self.last_dir == "DOWN" and self.direction == "UP":
+            self.head_img = pygame.transform.rotate(self.head_img, 180)
 
     def checkCollision(self):
         if self.position[0] > stg.SCREEN_W - stg.SNAKE_SIZE or self.position[0] < stg.SNAKE_SIZE:

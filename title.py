@@ -64,9 +64,9 @@ def react(pos):
         # If the mouse clicks the High Score Button
         else:
             stg.EXIT_HOVER = stg.WHITE
-            stg.HIGHSCORE_HOVER = stg.GREEN
+            stg.HIGHSCORE_HOVER = stg.WHITE
             stg.PLAY_HOVER = stg.WHITE
-            return True
+            stg.isHighScore = True
 
     # If the mouse hovers the Exit Button
     elif (stg.SCREEN_W // 2 - stg.FONT_SIZE * 1.25 <= pos[0] <= stg.SCREEN_W // 2 + stg.FONT_SIZE * 1.25) \
@@ -85,28 +85,117 @@ def react(pos):
             stg.HIGHSCORE_HOVER = stg.WHITE
             return False
 
+    # Resets the hover color if mouse is not hovering over anything
     else:
         stg.PLAY_HOVER = stg.WHITE
         stg.EXIT_HOVER = stg.WHITE
         stg.HIGHSCORE_HOVER = stg.WHITE
 
 
+# Translates the text file for high scores
+def translateTXT(scores):
+    if len(scores) == stg.scoreDict:
+        return
+
+    else:
+        length = len(scores)
+        for i in range(0, length):
+            acc_score = ""
+            acc_time = ""
+
+            index = 7
+            while scores[i][index] != " ":
+                acc_score += scores[i][index]
+
+                index += 1
+
+            index += 7
+
+            while scores[i][index] != "s":
+                acc_time += scores[i][index]
+
+                index += 1
+
+            stg.scoreDict[scores[i]] = [int(acc_score), int(acc_time)]
+
+
+# Sorts the list of scores
+def scoreSort(scores):
+    length = len(scores)
+    for i in range(0, length - 1):
+        for j in range(0, length - i - 1):
+            if stg.scoreDict[scores[j]][0] > stg.scoreDict[scores[j+1]][0]:
+                scores[j], scores[j+1] = scores[j+1], scores[j]
+
+            elif stg.scoreDict[scores[j]][0] == stg.scoreDict[scores[j + 1]][0]:
+                if stg.scoreDict[scores[j]][1] < stg.scoreDict[scores[j + 1]][1]:
+                    scores[j], scores[j+1] = scores[j+1], scores[j]
+
+    stg.isSorted = True
+
+
 # Draws the High Score Screen
-def highScore(screen):
+def highScore(screen, mousePos):
+    # Reads the text in the high_score.txt file
+    if not stg.scores_list:
+        with open('high_score.txt', 'r') as f:
+            stg.scores_list = f.readlines()
+
+    # Sorts the score list by highest score and lowest time
+    if not stg.isSorted:
+        translateTXT(stg.scores_list)
+        scoreSort(stg.scores_list)
+        stg.scores_list.reverse()
+
+    font = pygame.font.Font('freesansbold.ttf', stg.SCORE_FONT)
+
+    title = pygame.font.Font('freesansbold.ttf', stg.HIGHSCORE_FONT)
+
+    # Title
+    caption = title.render('HIGH SCORES', True, stg.WHITE)
+    captionRect = caption.get_rect()
+    captionRect.center = (stg.SCREEN_W // 2, stg.titleFont)
+
+    # Go Back
+    menuFont = pygame.font.Font('freesansbold.ttf', stg.FONT_SIZE)
+    back = menuFont.render('BACK', True, stg.BACK_HOVER)
+    backRect = back.get_rect()
+    backRect.center = (stg.SCREEN_W // 2, stg.SCREEN_H - stg.FONT_SIZE)
+
+    # Screen Updates
     screen.fill(stg.BLACK)
 
-    with open('high_score.txt', 'r') as f:
-        scores_list = f.readlines()
+    screen.blit(back, backRect)
+    screen.blit(caption, captionRect)
 
-        for i in range(0, 10):
-            if i < len(scores_list):
-                print(scores_list[i])
+    # If the mouse is hovering the back button
+    if (stg.SCREEN_H - stg.FONT_SIZE*1.5 <= mousePos[1] <= stg.SCREEN_H - stg.FONT_SIZE//2) and \
+            (stg.SCREEN_W // 2 - stg.FONT_SIZE * 2 <= mousePos[0] <= stg.SCREEN_W // 2 + stg.FONT_SIZE * 2):
+        stg.BACK_HOVER = stg.RED
 
-            else:
-                break
+        # If the mouse clicks on the back button
+        if pygame.mouse.get_pressed()[0] is True:
+            stg.isHighScore = False
+            stg.isTitle = True
 
-    stg.isHighScore = False
+    # The color resets otherwise
+    else:
+        stg.BACK_HOVER = stg.WHITE
+
+    start_y = stg.HIGHSCORE_FONT * 3
+
+    # Displays the High Scores
+    for i in range(0, 7):
+        if i < len(stg.scores_list):
+            scores = font.render(str(stg.scores_list[i])[:-1], True, stg.WHITE)
+            scoresRect = scores.get_rect()
+            scoresRect.center = (stg.SCREEN_W // 2, start_y)
+            start_y += stg.SCORE_FONT * 2
+
+            screen.blit(scores, scoresRect)
+
+        else:
+            break
 
     pygame.display.update()
 
-    return False

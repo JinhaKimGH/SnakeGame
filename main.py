@@ -7,29 +7,24 @@ import time
 
 
 def title(screen):
-    pygame.font.init()
-
     while True:
         screen.fill(stg.BLACK)
+        pygame.event.get()
 
         if stg.isHighScore:
-            if ttl.highScore(screen):
-                continue
-
-            else:
-                stg.isHighScore = False
-                continue
-
-        ttl.draw(screen)
-
-        if not ttl.react(pygame.mouse.get_pos()):
-            break
+            ttl.highScore(screen, pygame.mouse.get_pos())
 
         else:
-            stg.isHighScore = True
+            ttl.draw(screen)
+
+            if not ttl.react(pygame.mouse.get_pos()):
+                break
+
 
 def main():
     pygame.init()
+
+    pygame.font.init()
 
     screen = pygame.display.set_mode((stg.SCREEN_W, stg.SCREEN_H))
 
@@ -72,12 +67,16 @@ def main():
                     snakehead.direction_update()
 
             if snakehead.checkCollision() == 1:
+                stg.isSorted = False
                 end = time.time()
                 stg.isTitle = True
                 stg.startTime = True
 
-                with open('high_score.txt', 'w') as f:
+                with open('high_score.txt', 'a') as f:
                     f.write('Score: {} Time: {}s\n'.format(snakehead.length, round(end - start)))
+
+                with open('high_score.txt', 'r') as f:
+                    stg.scores_list = f.readlines()
 
                 snakehead = sn.Snake()
                 fruits = fr.Fruit()
@@ -87,7 +86,7 @@ def main():
 
             pygame.display.update()
             pygame.display.set_caption("Snake | Score: " + str(snakehead.length))
-            fps.tick(15)
+            fps.tick(25)
 
     pygame.quit()
 
