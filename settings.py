@@ -7,7 +7,7 @@ SCREEN_W = 500
 TITLE = "Snake Game"
 
 # Color
-snake_skin = (81, 189, 88)
+snake_skin = (204, 220, 57)
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (220, 20, 60)

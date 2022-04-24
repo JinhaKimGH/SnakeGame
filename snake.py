@@ -1,9 +1,10 @@
 import settings as stg
 import pygame
-import random
+
 
 class Snake:
-    def __init__(self, x=stg.SCREEN_W//stg.SNAKE_SPEED, y=stg.SCREEN_H//stg.SNAKE_SPEED):
+    # Initializes an object for the Snake class
+    def __init__(self, x=stg.SCREEN_W // 2, y=stg.SCREEN_H // 2):
         self.position = [x, y]
         self.direction = None
         self.body = [[x, y]]
@@ -13,10 +14,12 @@ class Snake:
                                                                                                stg.SNAKE_SIZE))
         self.last_dir = "DOWN"
 
+    # Updates the screen with the snake
     def update(self, screen):
         self.direction_update()
         self.draw(screen)
 
+    # Draws parts of the snake
     def draw(self, screen):
         first = True
 
@@ -29,6 +32,7 @@ class Snake:
                 rect = pygame.Rect(pos[0], pos[1], stg.SNAKE_SIZE, stg.SNAKE_SIZE)
                 pygame.draw.rect(screen, stg.snake_skin, rect)
 
+    # Moves the snake
     def move(self, foodPos):
         if self.direction == "RIGHT":
             self.position[0] = self.position[0] + stg.SNAKE_SPEED
@@ -40,17 +44,18 @@ class Snake:
             self.position[1] = self.position[1] + stg.SNAKE_SPEED
         self.body.insert(0, list(self.position))
 
-        if (foodPos[0] - stg.SNAKE_SPEED//2 <= self.position[0] <= foodPos[0] + stg.SNAKE_SPEED//2) and \
-                (foodPos[1] - stg.SNAKE_SPEED//2 <= self.position[1] <= foodPos[1] + stg.SNAKE_SPEED//2):
+        if (foodPos[0] - stg.SNAKE_SPEED // 2 <= self.position[0] <= foodPos[0] + stg.SNAKE_SPEED // 2) and \
+                (foodPos[1] - stg.SNAKE_SPEED // 2 <= self.position[1] <= foodPos[1] + stg.SNAKE_SPEED // 2):
             self.length += 1
             return 1
         else:
             self.body.pop()
             return 0
 
+    # Updates the snake's direction
     def direction_update(self):
         key = pygame.key.get_pressed()
-        if self.direction != None:
+        if self.direction is not None:
             self.last_dir = self.direction
 
         if key[pygame.K_LEFT] and self.direction != "RIGHT":
@@ -67,7 +72,7 @@ class Snake:
 
         self.rotate_head()
 
-
+    # Rotates the head of the snake
     def rotate_head(self):
         if self.last_dir == "RIGHT" and self.direction == "UP":
             self.head_img = pygame.transform.rotate(self.head_img, 90)
@@ -96,6 +101,7 @@ class Snake:
         elif self.last_dir == "DOWN" and self.direction == "UP":
             self.head_img = pygame.transform.rotate(self.head_img, 180)
 
+    # Checks for a collision with the snake's own body part or borders
     def checkCollision(self):
         if self.position[0] > stg.SCREEN_W - stg.SNAKE_SIZE or self.position[0] < stg.SNAKE_SIZE:
             return 1
@@ -105,4 +111,3 @@ class Snake:
             if self.position == bodyPart:
                 return 1
         return 0
-

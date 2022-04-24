@@ -3,6 +3,7 @@ import pygame
 import settings as stg
 
 
+# Draws the main title screen
 def draw(screen):
     font = pygame.font.Font('freesansbold.ttf', stg.FONT_SIZE)
     title = pygame.font.Font('freesansbold.ttf', stg.titleFont)
@@ -28,13 +29,14 @@ def draw(screen):
     screen.blit(highScore, highScoreRect)
 
     # Exit Button
-    exit = font.render('EXIT', True, stg.EXIT_HOVER)
-    exitRect = exit.get_rect(center=(stg.SCREEN_W // 2, stg.SCREEN_H // 2 + stg.FONT_SIZE * 4))
-    screen.blit(exit, exitRect)
+    exitbutton = font.render('EXIT', True, stg.EXIT_HOVER)
+    exitRect = exitbutton.get_rect(center=(stg.SCREEN_W // 2, stg.SCREEN_H // 2 + stg.FONT_SIZE * 4))
+    screen.blit(exitbutton, exitRect)
 
     pygame.display.update()
 
 
+# Checks what the user does with the mouse
 def react(pos):
     # If the mouse hovers over the play button
     if (stg.SCREEN_W // 2 - stg.FONT_SIZE * 1.25 <= pos[0] <= stg.SCREEN_W // 2 + stg.FONT_SIZE * 1.25) \
@@ -124,12 +126,12 @@ def scoreSort(scores):
     length = len(scores)
     for i in range(0, length - 1):
         for j in range(0, length - i - 1):
-            if stg.scoreDict[scores[j]][0] > stg.scoreDict[scores[j+1]][0]:
-                scores[j], scores[j+1] = scores[j+1], scores[j]
+            if stg.scoreDict[scores[j]][0] > stg.scoreDict[scores[j + 1]][0]:
+                scores[j], scores[j + 1] = scores[j + 1], scores[j]
 
             elif stg.scoreDict[scores[j]][0] == stg.scoreDict[scores[j + 1]][0]:
                 if stg.scoreDict[scores[j]][1] < stg.scoreDict[scores[j + 1]][1]:
-                    scores[j], scores[j+1] = scores[j+1], scores[j]
+                    scores[j], scores[j + 1] = scores[j + 1], scores[j]
 
     stg.isSorted = True
 
@@ -169,7 +171,7 @@ def highScore(screen, mousePos):
     screen.blit(caption, captionRect)
 
     # If the mouse is hovering the back button
-    if (stg.SCREEN_H - stg.FONT_SIZE*1.5 <= mousePos[1] <= stg.SCREEN_H - stg.FONT_SIZE//2) and \
+    if (stg.SCREEN_H - stg.FONT_SIZE * 1.5 <= mousePos[1] <= stg.SCREEN_H - stg.FONT_SIZE // 2) and \
             (stg.SCREEN_W // 2 - stg.FONT_SIZE * 2 <= mousePos[0] <= stg.SCREEN_W // 2 + stg.FONT_SIZE * 2):
         stg.BACK_HOVER = stg.RED
 
@@ -198,4 +200,3 @@ def highScore(screen, mousePos):
             break
 
     pygame.display.update()
-
